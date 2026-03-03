@@ -1,0 +1,25 @@
+2026-03-03 14:39:37.903 [main] INFO  com.deadlock.bot.BotApplication - Starting Deadlock Discord Bot - Phase 0
+2026-03-03 14:39:38.254 [main] INFO  c.d.bot.api.client.DeadlockApiClient - Testing Deadlock API connection...
+2026-03-03 14:39:38.618 [main] ERROR c.d.bot.api.client.DeadlockApiClient - Failed to get heroes: HTTP 404
+2026-03-03 14:39:38.620 [main] ERROR c.d.bot.api.client.DeadlockApiClient - ❌ Failed to load heroes
+2026-03-03 14:39:38.620 [main] INFO  com.deadlock.bot.BotApplication - Phase 0 completed successfully!
+2026-03-03 14:49:24.953 [main] INFO  com.deadlock.bot.BotApplication - Starting Deadlock Discord Bot - Phase 0
+2026-03-03 14:49:25.312 [main] INFO  c.d.bot.api.client.DeadlockApiClient - Testing Deadlock API connection...
+2026-03-03 14:49:31.174 [main] ERROR c.d.bot.api.client.DeadlockApiClient - Failed to get heroes: HTTP 404
+2026-03-03 14:49:31.175 [main] ERROR c.d.bot.api.client.DeadlockApiClient - ❌ Failed to load heroes
+2026-03-03 14:49:31.176 [main] INFO  com.deadlock.bot.BotApplication - Phase 0 completed successfully!
+2026-03-03 17:19:09.016 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-03 17:19:09.804 [JDA MainWS-ReadThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-03 17:19:10.256 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-03 17:20:50.053 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-03 17:20:50.722 [JDA MainWS-ReadThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-03 17:20:51.193 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-03 19:42:39.587 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-03 19:42:39.946 [JDA MainWS-ReadThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-03 19:42:40.337 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-03 19:57:00.685 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-03 19:57:01.047 [JDA MainWS-WriteThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-03 19:57:01.419 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-03 20:00:26.537 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-03 20:00:26.880 [JDA MainWS-WriteThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-03 20:00:27.427 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!

@@ -1,0 +1,37 @@
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+bin/
+out/
+
+# Логи
+*.log
+logs/
+
+# Конфигурация с секретами
+*.properties
+!logback.xml
+application.yml
+config/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Сборки
+*.jar
+*.war
+*.ear
+target/
