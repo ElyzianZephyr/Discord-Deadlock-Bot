@@ -1,8 +1,19 @@
-package com.deadlock.bot.api.model;
+package com.deadlock.bot.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+/**
+ * Доменная модель статистики игрока на конкретном герое.
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HeroStats {
 
@@ -30,27 +41,7 @@ public class HeroStats {
     @JsonProperty("time_played")
     private int timePlayed;
 
-    // Геттеры
-    public int getAccountId() { return accountId; }
-    public int getHeroId() { return heroId; }
-    public int getKills() { return kills; }
-    public int getDeaths() { return deaths; }
-    public int getAssists() { return assists; }
-    public int getMatchesPlayed() { return matchesPlayed; }
-    public int getWins() { return wins; }
-    public int getTimePlayed() { return timePlayed; }
-
-    // Сеттеры
-    public void setAccountId(int accountId) { this.accountId = accountId; }
-    public void setHeroId(int heroId) { this.heroId = heroId; }
-    public void setKills(int kills) { this.kills = kills; }
-    public void setDeaths(int deaths) { this.deaths = deaths; }
-    public void setAssists(int assists) { this.assists = assists; }
-    public void setMatchesPlayed(int matchesPlayed) { this.matchesPlayed = matchesPlayed; }
-    public void setWins(int wins) { this.wins = wins; }
-    public void setTimePlayed(int timePlayed) { this.timePlayed = timePlayed; }
-
-
+    // Бизнес-логика форматирования остается в доменной модели
     public String toSimpleString() {
         double winRate = matchesPlayed > 0 ? (wins * 100.0 / matchesPlayed) : 0;
         int minutesPlayed = timePlayed / 60;

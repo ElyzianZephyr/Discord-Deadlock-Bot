@@ -1,8 +1,8 @@
 package com.deadlock.bot.runner;
 
-import com.deadlock.bot.api.client.DeadlockApiClient;
-import com.deadlock.bot.api.model.HeroStats;
-import com.deadlock.bot.api.model.SteamProfile;
+import com.deadlock.bot.adapter.api.client.DeadlockApiClient;
+import com.deadlock.bot.domain.model.HeroStats;
+import com.deadlock.bot.domain.model.SteamProfile;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public class PlayerStatsRunner extends ListenerAdapter {
                 }
 
                 SteamProfile profile = profiles.get(0);
-                event.getChannel().sendMessage(profile.toSimpleString()).queue();
+                event.getChannel().sendMessage(profile.toDetailedString()).queue();
 
             } catch (Exception e) {
                 event.getChannel().sendMessage("Ошибка: " + e.getMessage()).queue();
@@ -48,7 +48,7 @@ public class PlayerStatsRunner extends ListenerAdapter {
         }
 
 
-        
+
 
         // Новая команда для статистики
         if (message.startsWith("!stats ")) {
