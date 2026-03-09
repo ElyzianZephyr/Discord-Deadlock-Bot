@@ -50,27 +50,20 @@ public class MatchesCommand implements SlashCommand {
 
         String accountIdStr = accountIdOption.getAsString();
 
-        try {
-            // 1. Получаем историю матчей из сервиса
-            List<MatchHistory> matchHistory = playerService.getMatchHistory(accountIdStr);
 
-            if (matchHistory.isEmpty()) {
-                event.getHook().sendMessage("❌ История матчей для данного игрока не найдена.").queue();
-                return;
-            }
-
-            int accountId = Integer.parseInt(accountIdStr.trim());
-
-            // 2. Создаем карточку (этот метод мы добавим в EmbedFactory на следующем шаге!)
-            MessageEmbed embed = EmbedFactory.createMatchesEmbed(accountId, matchHistory);
-
-            // 3. Отправляем карточку в Discord
-            event.getHook().sendMessageEmbeds(embed).queue();
-
-        } catch (IllegalArgumentException e) {
-            event.getHook().sendMessage("⚠️ " + e.getMessage()).queue();
-        } catch (Exception e) {
-            event.getHook().sendMessage("❌ Произошла ошибка при получении истории матчей: " + e.getMessage()).queue();
-        }
+        playerService.getMatchHistory(accountIdStr)
+                .thenAccept(matchHistory -> {
+                    if (matchHistory.isEmpty()) {
+                        event.getHook().sendMessage("❌ История матчей для данного игрока не найдена.").queue();
+                        return;
+                    }
+                    int accountId = Integer.parseInt(accountIdStr.trim());
+                    MessageEmbed embed = EmbedFactory.createMatchesEmbed(accountId, matchHistory);
+                    event.getHook().sendMessageEmbeds(embed).queue();
+                }).exceptionally(ex ->{
+                    Throwable realCause = ex.getCause() != null ? ex.getCause() : ex;
+                    event.getHook().sendMessage("❌ Произошла ошибка при получении истории матчей: " + ex.getMessage()).queue();
+                    return null;
+                });
     }
 }

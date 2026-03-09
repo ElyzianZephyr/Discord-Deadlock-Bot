@@ -52,28 +52,22 @@ public class StatsCommand implements SlashCommand {
 
         String accountIdStr = accountIdOption.getAsString();
 
-        try {
-            // 1. Получаем чистый список героев из сервиса
-            List<HeroStats> stats = playerService.getPlayerStats(accountIdStr);
+        playerService.getPlayerStats(accountIdStr)
+                .thenAccept(stats -> {
+                    if (stats.isEmpty()) {
+                        event.getHook().sendMessage("❌ Статистика для игрока не найдена (возможно, скрыт профиль).").queue();
+                        return;
+                    }
 
-            if (stats.isEmpty()) {
-                event.getHook().sendMessage("❌ Статистика для игрока не найдена (возможно, скрыт профиль).").queue();
-                return;
-            }
+                    int accountId = Integer.parseInt(accountIdStr.trim());
 
-            int accountId = Integer.parseInt(accountIdStr.trim());
-
-            // 2. Создаем красивую карточку через фабрику
-            MessageEmbed embed = EmbedFactory.createStatsEmbed(accountId, stats);
-
-            // 3. Отправляем карточку в Discord
-            event.getHook().sendMessageEmbeds(embed).queue();
-
-        } catch (IllegalArgumentException e) {
-            // Перехватываем ошибку неверного ввода (например, если ввели буквы)
-            event.getHook().sendMessage("⚠️ " + e.getMessage()).queue();
-        } catch (Exception e) {
-            event.getHook().sendMessage("❌ Произошла ошибка при получении статистики: " + e.getMessage()).queue();
-        }
+                    MessageEmbed embed = EmbedFactory.createStatsEmbed(accountId, stats);
+                    event.getHook().sendMessageEmbeds(embed).queue();
+                })
+                .exceptionally(ex -> {
+                    Throwable realCause = ex.getCause() != null ? ex.getCause() : ex;
+                    event.getHook().sendMessage("❌ Произошла ошибка при получении статистики: " + ex.getMessage()).queue();
+                    return null;
+                });
     }
 }

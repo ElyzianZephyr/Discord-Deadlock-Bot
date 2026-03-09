@@ -56,3 +56,25 @@
 2026-03-06 00:43:22.572 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
 2026-03-06 00:43:22.951 [JDA MainWS-WriteThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
 2026-03-06 00:43:23.346 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-06 01:55:55.929 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-06 01:55:56.298 [JDA MainWS-WriteThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-06 01:55:56.616 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-09 19:27:27.954 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-09 19:27:28.699 [JDA MainWS-WriteThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-09 19:27:29.373 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-09 19:29:26.998 [ForkJoinPool.commonPool-worker-2] DEBUG c.deadlock.bot.service.PlayerService - Запрос истории матчей для account_id: 177136082
+2026-03-09 19:29:27.001 [ForkJoinPool.commonPool-worker-2] DEBUG c.deadlock.bot.service.PlayerService - Успешный парсинг account_id: 177136082
+2026-03-09 19:29:27.002 [ForkJoinPool.commonPool-worker-2] DEBUG c.deadlock.bot.service.PlayerService - Выполнение операции для account_id: 177136082
+2026-03-10 00:59:09.612 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-10 00:59:10.335 [JDA MainWS-WriteThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-10 00:59:10.713 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!
+2026-03-10 01:00:48.805 [ForkJoinPool.commonPool-worker-2] DEBUG c.deadlock.bot.service.PlayerService - Запрос статистики по героям для account_id: 177136082
+2026-03-10 01:00:48.807 [ForkJoinPool.commonPool-worker-2] DEBUG c.deadlock.bot.service.PlayerService - Успешный парсинг account_id: 177136082
+2026-03-10 01:00:48.807 [ForkJoinPool.commonPool-worker-2] DEBUG c.deadlock.bot.service.PlayerService - Выполнение операции для account_id: 177136082
+2026-03-10 01:01:20.258 [ForkJoinPool.commonPool-worker-4] DEBUG c.deadlock.bot.service.PlayerService - Запрос на поиск профиля Steam: 177136082
+2026-03-10 01:01:20.259 [ForkJoinPool.commonPool-worker-4] DEBUG c.deadlock.bot.service.PlayerService - Поисковый запрос после валидации: 177136082
+2026-03-10 01:01:20.790 [OkHttp https://api.deadlock-api.com/...] DEBUG c.deadlock.bot.service.PlayerService - Получено 100 профилей для запроса: 177136082
+2026-03-10 01:01:20.791 [OkHttp https://api.deadlock-api.com/...] INFO  c.deadlock.bot.service.PlayerService - Найден профиль: ElysianZephyr (ID: 177136082)
+2026-03-10 01:18:38.706 [main] INFO  net.dv8tion.jda.api.JDA - Login Successful!
+2026-03-10 01:18:39.439 [JDA MainWS-ReadThread] INFO  n.d.j.i.requests.WebSocketClient - Connected to WebSocket
+2026-03-10 01:18:39.981 [JDA MainWS-ReadThread] INFO  net.dv8tion.jda.api.JDA - Finished Loading!

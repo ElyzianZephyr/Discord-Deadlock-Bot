@@ -15,6 +15,9 @@ gradle-app.setting
 .settings/
 bin/
 out/
+Token.env
+
+
 
 # Логи
 *.log

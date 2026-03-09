@@ -1,5 +1,6 @@
 package com.deadlock.bot;
 
+import com.deadlock.bot.adapter.api.client.CachedDeadlockApiClient;
 import com.deadlock.bot.adapter.api.client.DeadlockApiClient;
 import com.deadlock.bot.adapter.discord.command.MatchesCommand;
 import com.deadlock.bot.adapter.discord.command.SlashCommand;
@@ -28,12 +29,9 @@ public class BotApplication {
                 throw new IllegalStateException("DISCORD_BOT_TOKEN environment variable is not set");
             }
 
-            // 2. РУЧНОЕ ВНЕДРЕНИЕ ЗАВИСИМОСТЕЙ (Dependency Injection)
-            // Инициализируем Адаптер (Порт)
-            DeadlockApiPort apiPort = new DeadlockApiClient();
-
-            // Инициализируем Сервис (Бизнес-логику)
-            PlayerService playerService = new PlayerService(apiPort);
+            DeadlockApiPort realApiClient = new DeadlockApiClient();
+            DeadlockApiPort cachedApiClient = new CachedDeadlockApiClient(realApiClient);
+            PlayerService playerService = new PlayerService(cachedApiClient);
 
             // Инициализируем Команды
             SlashCommand steamCommand = new SteamCommand(playerService);

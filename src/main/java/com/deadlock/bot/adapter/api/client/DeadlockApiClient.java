@@ -1,5 +1,6 @@
 package com.deadlock.bot.adapter.api.client;
 
+import com.deadlock.bot.domain.exception.ApiException;
 import com.deadlock.bot.domain.model.MatchHistory;
 import com.deadlock.bot.domain.model.HeroStats;
 import com.deadlock.bot.domain.model.SteamProfile;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class DeadlockApiClient implements DeadlockApiPort {
@@ -35,121 +37,88 @@ public class DeadlockApiClient implements DeadlockApiPort {
     }
 
     @Override
-    public List<SteamProfile> searchSteamProfile(String searchQuery) {
+    public CompletableFuture<List<SteamProfile>> searchSteamProfile(String searchQuery) {
         String url = BASE_URL + "/players/steam-search?search_query=" + searchQuery;
-
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Accept", "application/json")
-                .build();
-
-        try (Response response = httpClient.newCall(request).execute()) {
-            if (response.code() == 404) {
-                return new ArrayList<>(); // Пустой список если ничего не найдено
-            }
-
-            if (!response.isSuccessful() || response.body() == null) {
-                throw new RuntimeException("Failed to search steam profiles. HTTP: " + response.code());
-            }
-
-            String responseBody = response.body().string();
-            JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, SteamProfile.class);
-            return objectMapper.readValue(responseBody, type);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Network error while searching steam profile", e);
-        }
+        JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, SteamProfile.class);
+        return executeGetRequest(url, type , new ArrayList<>());
     }
 
+
+
     @Override
-    public Optional<SteamProfile> getPlayerProfile(int accountId) {
+    public CompletableFuture<Optional<SteamProfile>> getPlayerProfile(int accountId) {
         String url = BASE_URL + "/players/" + accountId;
+        JavaType type = objectMapper.getTypeFactory().constructType(SteamProfile.class);
 
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Accept", "application/json")
-                .build();
 
-        try (Response response = httpClient.newCall(request).execute()) {
-            if (response.code() == 404) {
-                return Optional.empty(); // Возвращаем пустой Optional, если профиль не найден
-            }
-
-            if (!response.isSuccessful() || response.body() == null) {
-                throw new RuntimeException("Failed to get player profile. HTTP: " + response.code());
-            }
-
-            String responseBody = response.body().string();
-            return Optional.ofNullable(objectMapper.readValue(responseBody, SteamProfile.class));
-
-        } catch (IOException e) {
-            throw new RuntimeException("Network error while getting player profile", e);
-        }
+        return this.<SteamProfile>executeGetRequest(url, type, null)
+                .thenApply(Optional::ofNullable);
     }
 
+
+
     @Override
-    public List<MatchHistory> getMatchHistory(int accountId) {
-        // Используем базовый эндпоинт без параметров, чтобы получить кэшированную + новую историю
+    public CompletableFuture<List<MatchHistory>> getMatchHistory(int accountId) {
         String url = BASE_URL + "/players/" + accountId + "/match-history";
-
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Accept", "application/json")
-                .build();
-
-        try (Response response = httpClient.newCall(request).execute()) {
-            if (response.code() == 404) {
-                return new ArrayList<>(); // История не найдена
-            }
-
-            if (!response.isSuccessful() || response.body() == null) {
-                throw new RuntimeException("Failed to get match history. HTTP: " + response.code());
-            }
-
-            String responseBody = response.body().string();
-
-            if (responseBody.trim().isEmpty() || responseBody.equals("[]")) {
-                return new ArrayList<>();
-            }
-
-            // Конвертируем JSON-ответ в список объектов MatchHistory
-            JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, MatchHistory.class);
-            return objectMapper.readValue(responseBody, type);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Network error while getting match history", e);
-        }
+        JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, MatchHistory.class);
+        return executeGetRequest(url, type, new ArrayList<>());
     }
 
     @Override
-    public List<HeroStats> getHeroStats(int accountId) {
+    public CompletableFuture<List<HeroStats>> getHeroStats(int accountId) {
         String url = BASE_URL + "/players/hero-stats?account_ids=" + accountId;
+        JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, HeroStats.class);
+        return executeGetRequest(url, type, new ArrayList<>());
+    }
+
+    /// Вспомогательные методы
+
+    private <T> CompletableFuture<T> executeGetRequest(String url, JavaType type, T valueIfNotFound) {
+        CompletableFuture<T> future = new CompletableFuture<>();
 
         Request request = new Request.Builder()
                 .url(url)
                 .header("Accept", "application/json")
                 .build();
 
-        try (Response response = httpClient.newCall(request).execute()) {
-            if (response.code() == 404) {
-                return new ArrayList<>(); // Статистика не найдена
+        httpClient.newCall(request).enqueue(createCallback(future, type, valueIfNotFound));
+
+        return future;
+    }
+
+    private <T> okhttp3.Callback createCallback(CompletableFuture<T> future, JavaType type, T valueIfNotFound) {
+        return new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                future.completeExceptionally(new ApiException("Network error: " + e.getMessage()));
             }
 
-            if (!response.isSuccessful() || response.body() == null) {
-                throw new RuntimeException("Failed to get hero stats. HTTP: " + response.code());
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) {
+
+                try (response) {
+                    if (response.code() == 404) {
+                        future.complete(valueIfNotFound);
+                        return;
+                    }
+
+                    if (!response.isSuccessful() || response.body() == null) {
+                        future.completeExceptionally(new ApiException("Failed to search. HTTP: " + response.code()));
+                        return;
+                    }
+
+                    //String responseBody = response.body().string();
+                    //T result = objectMapper.readValue(responseBody, type);
+                    T result = objectMapper.readValue(response.body().charStream(), type);
+
+                    // Передаем готовые данные
+                    future.complete(result);
+
+                } catch (Exception e) {
+                    // Перехватываем ошибки парсинга JSON
+                    future.completeExceptionally(new ApiException("Error parsing response: " + e.getMessage()));
+                }
             }
-
-            String responseBody = response.body().string();
-
-            if (responseBody.trim().isEmpty() || responseBody.equals("[]")) {
-                return new ArrayList<>();
-            }
-
-            JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, HeroStats.class);
-            return objectMapper.readValue(responseBody, type);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Network error while getting hero stats", e);
-        }
+        };
     }
 }

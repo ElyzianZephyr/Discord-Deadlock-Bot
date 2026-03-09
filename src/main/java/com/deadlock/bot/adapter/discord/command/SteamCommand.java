@@ -51,28 +51,23 @@ public class SteamCommand implements SlashCommand {
 
         String query = queryOption.getAsString();
 
-        try {
-            // Обращаемся к сервису за объектом профиля (возвращает Optional)
-            Optional<SteamProfile> profileOpt = playerService.getSteamProfile(query);
 
-            if (profileOpt.isEmpty()) {
-                // Если Optional пустой — профиль не найден
-                event.getHook().sendMessage("❌ Профиль по запросу `" + query + "` не найден.").queue();
-                return;
-            }
+        playerService.getSteamProfile(query)
+                .thenAccept(profileOpt -> {
+                    // Этот блок выполнится ТОЛЬКО когда ответ успешно придет от API
+                    if (profileOpt.isEmpty()) {
+                        event.getHook().sendMessage("❌ Профиль по запросу `" + query + "` не найден.").queue();
+                        return;
+                    }
 
-            // Передаем найденный объект профиля в нашу фабрику для отрисовки
-            MessageEmbed embed = EmbedFactory.createProfileEmbed(profileOpt.get());
-
-            // Отправляем готовую карточку (Embed) в Discord
-            event.getHook().sendMessageEmbeds(embed).queue();
-
-        } catch (IllegalArgumentException e) {
-            // Перехватываем ошибку пустого ввода из PlayerService
-            event.getHook().sendMessage("⚠️ " + e.getMessage()).queue();
-        } catch (Exception e) {
-            // Перехватываем любые другие ошибки (например, упал сервер API)
-            event.getHook().sendMessage("❌ Произошла ошибка при поиске профиля: " + e.getMessage()).queue();
-        }
+                    // Собираем карточку и отправляем
+                    MessageEmbed embed = EmbedFactory.createProfileEmbed(profileOpt.get());
+                    event.getHook().sendMessageEmbeds(embed).queue();
+                })
+                .exceptionally(ex -> {
+                    Throwable realCause = ex.getCause() != null ? ex.getCause() : ex;
+                    event.getHook().sendMessage("❌ " + realCause.getMessage()).queue();
+                    return null;
+                });
     }
 }

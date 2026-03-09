@@ -24,28 +24,16 @@ public class CommandManager extends ListenerAdapter {
         }
     }
 
-    @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        // Ищем команду по имени (например, "steam" или "stats")
-        SlashCommand command = commands.get(event.getName());
 
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        SlashCommand command = commands.get(event.getName());
         if (command == null) {
-            event.reply("Команда не найдена!").setEphemeral(true).queue();
+            event.reply("Неизвестная команда!").setEphemeral(true).queue();
             return;
         }
-
-        // Сообщаем Discord, что мы приняли команду и начали обработку (спасает от ошибки таймаута 3 секунд)
         event.deferReply().queue();
-
-        // Запускаем выполнение команды асинхронно, чтобы не блокировать главный поток JDA (Java 17)
-        CompletableFuture.runAsync(() -> {
-            try {
-                command.execute(event);
-            } catch (Exception e) {
-                // Если произошла непредвиденная ошибка, сообщаем пользователю
-                event.getHook().sendMessage("❌ Произошла ошибка при выполнении команды: " + e.getMessage()).queue();
-            }
-        });
+        command.execute(event);
     }
 
     /**
